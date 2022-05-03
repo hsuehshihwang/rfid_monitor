@@ -16,6 +16,7 @@
 
 long detect_oneloop_time=5; 
 long filter_valid_time=500000; 
+int valid_times=5; 
 
 int appendTimestamp(timestamp **ppTab, long sec, long usec){
 	timestamp *pTAppend=NULL; 
@@ -228,10 +229,10 @@ void analyzeCar(void){
 									count++; 
 								}
 							}
-							if(count>4) break; 
+							if(count>(valid_times-1)) break; 
 							pTTTmp=pTTTmp->pPrev; 
 						}
-						if(count>4){
+						if(count>(valid_times-1)){
 							pTT=pTTTmp; 
 							do {
 								char data[128]={0}; 
@@ -261,10 +262,10 @@ void analyzeCar(void){
 									count++; 
 								}
 							}
-							if(count>4) break; 
+							if(count>(valid_times-1)) break; 
 							pTTTmp=pTTTmp->pNext; 
 						}
-						if(count>4){
+						if(count>(valid_times-1)){
 							pTT=pTTTmp; 
 							do {
 								char data[128]={0}; 

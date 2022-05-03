@@ -160,6 +160,8 @@ Usage: %s [OPTIONS]... \n\
                              Default: 5(sec) \n\
   -f, --filter               Filter valid signal interval. (Unit: micro second)\n\
                              Default: 500000(us) \n\
+  -t, --times                Filter valid signal times. \n\
+                             Default: 5 times \n\
   -h, --help                 Display this help and exit. \n\
 "; 
 	fprintf(stderr, fmt, name); 
@@ -176,6 +178,7 @@ int main(int argc, char *argv[]){
 			{"port",    required_argument, 0, 'p'},
 			{"detect",  required_argument, 0, 'd'},
 			{"filter",  required_argument, 0, 'f'},
+			{"times",   required_argument, 0, 't'},
 			{"help",    no_argument,       0, 'h'},
 			{0,         0,                 0,  0 }
 		};
@@ -209,10 +212,17 @@ int main(int argc, char *argv[]){
 
 			case 'd':
 				detect_oneloop_time=atoi(optarg); 
+				detect_oneloop_time=(detect_oneloop_time>0?detect_oneloop_time:5); 
 				break;
 
 			case 'f':
 				filter_valid_time=atoi(optarg); 
+				filter_valid_time=(filter_valid_time>0?filter_valid_time:500000); 
+				break;
+
+			case 't':
+				valid_times=atoi(optarg); 
+				valid_times=(valid_times>0?valid_times:5); 
 				break;
 
 			case '?':
