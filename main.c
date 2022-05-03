@@ -53,11 +53,14 @@ void fetch_data_func(void){
 	char c=0; 
 	char *p=line; 
 	int lock_fd=0; 
+	FILE *logfp; 
 	sleep(1);
 	lock_fd=api_lock("lockf"); 
 	while(1){ if(telnet_init) break; usleep(100000); }
 	fd=open("telnet", O_RDONLY); 
 	api_unlock(lock_fd); 
+	if(!access("telnet.log", F_OK)) remove("telnet.log"); 
+	logfp=fopen("telnet.log", "a"); 
 	dbge("fd(%d)", fd); 
 	if(fd>0){
 		while(1){
@@ -98,6 +101,12 @@ void fetch_data_func(void){
 							line, 1900 + ptm->tm_year, 1 + ptm->tm_mon, ptm->tm_mday, 
 							wday[ptm->tm_wday], ptm->tm_hour+8, ptm->tm_min, ptm->tm_sec, te.tv_usec/1000, 
 							te.tv_sec, te.tv_usec, id, ant, user); 
+					fprintf(logfp, "%02d/%02d/%02d %s - %02d:%02d:%02d.%03ld: %s\n", 
+							1900 + ptm->tm_year, 1 + ptm->tm_mon, ptm->tm_mday, 
+							wday[ptm->tm_wday], ptm->tm_hour+8, ptm->tm_min, ptm->tm_sec, te.tv_usec/1000, 
+							line); 
+					fflush(stderr); 
+					fflush(logfp); 
 					if(strlen(id)>0){
 						appendCarTimestamp(id, te.tv_sec, te.tv_usec); 
 						// dumpCar(); 
@@ -113,6 +122,7 @@ void fetch_data_func(void){
 			}
 		}
 		close(fd); 
+		fclose(logfp); 
 	}
 }
 
