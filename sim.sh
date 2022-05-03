@@ -136,8 +136,6 @@ sleep 1
 echo $car1rfid >> telnet
 sleep 2
 
-sleep 103
-
 exit; 
 # As below, it's the log provided from Nick. 
 ID NO:8200000013A3000000000000;ANT NO:01;User Code:08

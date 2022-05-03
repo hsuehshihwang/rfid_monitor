@@ -25,4 +25,6 @@ void cleanCar(void);
 void dumpCar(void);
 void logCar(void); 
 void analyzeCar(void);
+extern long detect_oneloop_time; 
+extern long filter_valid_time; 
 #endif

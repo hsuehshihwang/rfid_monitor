@@ -14,6 +14,9 @@
 
 #include "car.h"
 
+long detect_oneloop_time=5; 
+long filter_valid_time=500000; 
+
 int appendTimestamp(timestamp **ppTab, long sec, long usec){
 	timestamp *pTAppend=NULL; 
 	pTAppend=malloc(sizeof(timestamp)); 
@@ -205,7 +208,7 @@ void analyzeCar(void){
 					pTTTmp=pTT; 
 					while(pTTTmp){
 						if(pTTTmp->pNext){
-							if((pTTTmp->pNext->sec-pTTTmp->sec)>5){
+							if((pTTTmp->pNext->sec-pTTTmp->sec)>detect_oneloop_time){
 								pTT=pTTTmp; 
 								oneLoopDone=1; 
 								break; 
@@ -221,7 +224,7 @@ void analyzeCar(void){
 								long sec=0, usec=0; 
 								sec=(pTTTmp->sec-pTTTmp->pPrev->sec); 
 								usec=(pTTTmp->usec-pTTTmp->pPrev->usec); 
-								if((1000000*sec+usec)<500000){
+								if((1000000*sec+usec)<filter_valid_time){
 									count++; 
 								}
 							}
@@ -246,7 +249,7 @@ void analyzeCar(void){
 						}
 					}
 				}else{
-					if((pTT->sec-pTTPrev->sec)>5){
+					if((pTT->sec-pTTPrev->sec)>detect_oneloop_time){
 						int count=0; 
 						pTTTmp=pTT; 
 						while(pTTTmp){
@@ -254,7 +257,7 @@ void analyzeCar(void){
 								long sec=0, usec=0; 
 								sec=(pTTTmp->pNext->sec-pTTTmp->sec); 
 								usec=(pTTTmp->pNext->usec-pTTTmp->usec); 
-								if((1000000*sec+usec)<500000){
+								if((1000000*sec+usec)<filter_valid_time){
 									count++; 
 								}
 							}

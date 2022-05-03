@@ -72,6 +72,8 @@ void fetch_data_func(void){
 						continue; 
 					}
 					sscanf(line, "ID NO:%[^;];ANT NO:%[^;];User Code:%s", id, ant, user);
+					// Shorten the ID length to 12 characters. 
+					sscanf(id, "%12s", id); 
 					// time_t now=time(NULL); 
 					// p+=sprintf(p, "%c", c); 
 					struct timeval te; 
@@ -148,9 +150,16 @@ void setSigExitFunc(void){
 void usage_func(char *name){
 	char fmt[]="\
 Usage: %s [OPTIONS]... \n\
-  -s, --sim                  Enable simulation mode. \n\
+  -s, --sim                  Enable simulation mode. (0: disable, 1: enable) \n\
+                             Default: disabled. \n\
   -a, --addr                 Telnet server address. \n\
+                             Default: 192.168.1.1 \n\
   -p, --port                 Telnet server port. \n\
+                             Default: 23 \n\
+  -d, --detect               Detect one loop time. (Unit: second)\n\
+                             Default: 5(sec) \n\
+  -f, --filter               Filter valid signal interval. (Unit: micro second)\n\
+                             Default: 500000(us) \n\
   -h, --help                 Display this help and exit. \n\
 "; 
 	fprintf(stderr, fmt, name); 
@@ -165,11 +174,13 @@ int main(int argc, char *argv[]){
 			{"sim",     no_argument,       0, 's'},
 			{"addr",    required_argument, 0, 'a'},
 			{"port",    required_argument, 0, 'p'},
+			{"detect",  required_argument, 0, 'd'},
+			{"filter",  required_argument, 0, 'f'},
 			{"help",    no_argument,       0, 'h'},
 			{0,         0,                 0,  0 }
 		};
 
-		c = getopt_long(argc, argv, "hsa:p:",
+		c = getopt_long(argc, argv, "hsa:p:d:f:",
 				long_options, &option_index);
 		if (c == -1)
 			break;
@@ -196,9 +207,18 @@ int main(int argc, char *argv[]){
 				strcpy(telnet_port, optarg); 
 				break;
 
+			case 'd':
+				detect_oneloop_time=atoi(optarg); 
+				break;
+
+			case 'f':
+				filter_valid_time=atoi(optarg); 
+				break;
+
 			case '?':
 			case 'h':
 				usage_func(argv[0]); 
+				exit(0); 
 				break;
 
 			default:
